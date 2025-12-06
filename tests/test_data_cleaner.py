@@ -30,6 +30,7 @@ class TestDataCleaner(unittest.TestCase):
         DataFrames completos, lo cual es útil porque maneja correctamente los índices,
         tipos de datos y valores NaN de Pandas.
         """
+        """este metodo no modifica el dataframe original y devuelve una copia limpia, bueno para los tests"""
         df = pd.DataFrame({
             "name": ["  Alice  ", "  Bob  ", "Carol"],
             "age": [25, 30, 35]
@@ -75,18 +76,28 @@ class TestDataCleaner(unittest.TestCase):
     def test_drop_invalid_rows_removes_rows_with_missing_values(self):
         """Test que verifica que el método drop_invalid_rows elimina correctamente las filas
         que contienen valores faltantes (NaN o None) en las columnas especificadas.
-        
-        Escenario esperado:
+                Escenario esperado:
         - Crear un DataFrame con valores faltantes usando make_sample_df()
         - Llamar a drop_invalid_rows con las columnas "name" y "age"
         - Verificar que el DataFrame resultante no tiene valores faltantes en esas columnas (usar self.assertEqual para comparar .isna().sum() con 0 - comparación simple de enteros, unittest es suficiente)
         - Verificar que el DataFrame resultante tiene menos filas que el original (usar self.assertLess con len() - comparación simple de enteros, unittest es suficiente)
         """
 
+        df = make_sample_df()
+        original_len = len(df)
+
+        cleaner = DataCleaner() #creamos un dataframe de prueba con la funcion ayuda
+
+        result = cleaner.drop_invalid_rows(df, ["name", "age"]) #ejecutamos lo que vamos a testear
+    
+        self.assertEqual(result["name"].isna().sum(), 0)
+        self.assertEqual(result["age"].isna().sum(), 0)
+        self.assertLess(len(result), original_len)
+        # verificamos que el resultado tiene menos rfilas que el original, antes verificamos que no hayan valores faltantes en las columnnas elegidas
+
     def test_drop_invalid_rows_raises_keyerror_for_unknown_column(self):
         """Test que verifica que el método drop_invalid_rows lanza un KeyError cuando
         se llama con una columna que no existe en el DataFrame.
-        
         Escenario esperado:
         - Crear un DataFrame usando make_sample_df()
         - Llamar a drop_invalid_rows con una columna que no existe (ej: "does_not_exist")
