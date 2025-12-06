@@ -153,6 +153,18 @@ class TestStatisticsUtils(unittest.TestCase):
         - Verificar que el valor máximo del resultado es 1.0 (usar self.assertAlmostEqual para un solo valor numérico - unittest es suficiente)
         - Verificar que los valores transformados son correctos (ej: [0.0, 0.5, 1.0] para [2, 4, 6]) (usar numpy.testing.assert_allclose() para comparar el array completo - esto es necesario para comparar arrays de NumPy con tolerancia para errores de punto flotante)
         """
+        utils = StatisticsUtils()
+        arr = [2, 4, 6]
+        result = utils.min_max_scale(arr)
+
+        # minimo y max
+        self.assertAlmostEqual(result.min(), 0.0, places=7)
+        self.assertAlmostEqual(result.max(), 1.0, places=7)
+
+        # Verificar valores transformados completos
+        expected = np.array([0.0, 0.5, 1.0])
+        npt.assert_allclose(result, expected, rtol=1e-7, atol=1e-7)
+
 
     def test_min_max_scale_raises_for_constant_values(self):
         """Test que verifica que el método min_max_scale lanza un ValueError cuando
