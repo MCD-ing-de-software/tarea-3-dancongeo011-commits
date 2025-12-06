@@ -167,7 +167,7 @@ class TestDataCleaner(unittest.TestCase):
 
         cleaner = DataCleaner()
 
-        result = cleaner.remove_outliers_iqr(df, col="age", factor=0.5)
+        result = cleaner.remove_outliers_iqr(df, col="age", factor=1.5)
 
         ages = list(result["age"].dropna())
 
@@ -185,10 +185,11 @@ class TestDataCleaner(unittest.TestCase):
         - Llamar a remove_outliers_iqr con una columna que no existe (ej: "salary")
         - Verificar que se lanza un KeyError (usar self.assertRaises)
         """
-        f = make_sample_df()
+        df = make_sample_df()
         cleaner = DataCleaner()
 
         # Debe lanzar KeyError porque "salary" no existe en el DataFrame
+        
         with self.assertRaises(KeyError):
             cleaner.remove_outliers_iqr(df, "salary")
 
@@ -204,10 +205,10 @@ class TestDataCleaner(unittest.TestCase):
         df = make_sample_df()
         cleaner = DataCleaner()
 
-        # Usamos assertRaises para verificar la excepcin correcta
-        with self.assertRaises(KeyError):
-            cleaner.remove_outliers_iqr(df, "salary")  # columna inexistente
+        with self.assertRaises(TypeError):
+            cleaner.remove_outliers_iqr(df, "city")
 
+      
 
 if __name__ == "__main__":
     unittest.main()
